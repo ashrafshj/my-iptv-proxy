@@ -1,21 +1,25 @@
 <?php
-// index.php - Simple Direct Token Proxy
+// index.php - Direct M3U8 Stream Fetcher
 $id = isset($_GET['id']) ? $_GET['id'] : '900';
+$target = "https://s.ipl2026.workers.dev/live.m3u8?id=" . $id;
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://s.ipl2026.workers.dev/live.m3u8?id=" . $id);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+header("Content-Type: application/vnd.apple.mpegurl");
+header("Access-Control-Allow-Origin: *");
 
-$response = curl_exec($ch);
-curl_close($ch);
+$opts = [
+    "http" => [
+        "method" => "GET",
+        "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n"
+    ]
+];
 
-if ($response) {
-    header("Content-Type: application/vnd.apple.mpegurl");
-    echo $response;
+$context = stream_context_create($opts);
+$content = @file_get_contents($target, false, $context);
+
+if ($content !== FALSE) {
+    echo $content;
 } else {
-    header("Location: https://s.ipl2026.workers.dev/live.m3u8?id=" . $id);
+    header("Location: " . $target);
 }
 exit();
 ?>
