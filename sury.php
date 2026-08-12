@@ -1,35 +1,12 @@
 <?php
-// User-Agent & Referer Headers
 $userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-$referer = "https://bhoomtv.net/";
+$referer = "https://b4uplay.com/";
 
-// Target Site URL (ചാനൽ ഉള്ള പേജ് / API)
-$targetUrl = "https://bhoomtv.net/"; 
+// പ്ലെയർ സ്ട്രീം പേജ് / API URL
+$targetUrl = "https://b4uplay.com/sunxt/livestream15.sunnxt.com/54ce8446ac9e412591bba4de574760d5/SuryaTVHD_P_IN_index.mpd"; 
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $targetUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "User-Agent: " . $userAgent,
-    "Referer: " . $referer
-]);
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-// .mpd URL 추출 ചെയ്യുന്ന Regex Pattern
-preg_match('/https?:\/\/[^\s"]+\.mpd\?[^"\s]+/', $response, $matches);
-
-if (!empty($matches[0])) {
-    $mpdUrl = $matches[0];
-    
-    // TiviMate-ലേക്ക് 302 Redirect നൽകുന്നു
-    header("Location: " . $mpdUrl, true, 302);
-    exit();
-} else {
-    http_response_code(404);
-    echo "Stream URL not found or Expired.";
-}
+// നേരിട്ട് MPD സ്ട്രീമിലേക്ക് 302 Redirect നൽകുന്നു
+header("Location: " . $targetUrl, true, 302);
+exit();
 ?>
 
